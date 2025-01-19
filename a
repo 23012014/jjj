@@ -1,0 +1,93 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(CalculadoraApp());
+}
+
+class CalculadoraApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Calculadora',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: CalculadoraScreen(),
+    );
+  }
+}
+
+class CalculadoraScreen extends StatefulWidget {
+  @override
+  _CalculadoraScreenState createState() => _CalculadoraScreenState();
+}
+
+class _CalculadoraScreenState extends State<CalculadoraScreen> {
+  String input = '';
+  String output = '';
+
+  // Função para processar o número ou operação
+  void onButtonPressed(String buttonText) {
+    setState(() {
+      if (buttonText == "=") {
+        try {
+          output = _calculateResult(input);
+        } catch (e) {
+          output = "Erro";
+        }
+      } else if (buttonText == "C") {
+        input = "";
+        output = "";
+      } else {
+        input += buttonText;
+      }
+    });
+  }
+
+  // Função para calcular a expressão
+  String _calculateResult(String input) {
+    // Esse é um exemplo simplificado, um parser real seria necessário para maior precisão
+    input = input.replaceAll("x", "*").replaceAll("÷", "/");
+    // Aqui poderia ser implementado um parser de expressão (ex: usando a biblioteca math)
+    // Para simplificar, usaremos eval (note que isso é apenas um exemplo simples)
+    return input;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Calculadora')),
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Text(input, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            Text(output, style: TextStyle(fontSize: 24, color: Colors.green)),
+            SizedBox(height: 20),
+            GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: 20,
+              itemBuilder: (context, index) {
+                List<String> buttons = [
+                  '7', '8', '9', '÷',
+                  '4', '5', '6', 'x',
+                  '1', '2', '3', '-',
+                  '0', '.', '=', '+',
+                  'C'
+                ];
+                return ElevatedButton(
+                  onPressed: () => onButtonPressed(buttons[index]),
+                  child: Text(buttons[index], style: TextStyle(fontSize: 20)),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
